@@ -1,21 +1,39 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Respect.Client.Authentication
 @inject NavigationManager Navigation
+@inject HttpClient HttpClient
+@inject AuthManager AuthManager
 
-<AuthorizeView>
-    <Authorized>
-        <a href="authentication/profile">Hello, @context.User.Identity?.Name!</a>
-        <button class="nav-link btn btn-link" @onclick="BeginLogOut">Log out</button>
-    </Authorized>
-    <NotAuthorized>
-        <a href="authentication/register">Register</a>
-        <a href="authentication/login">Log in</a>
-    </NotAuthorized>
-</AuthorizeView>
+@if (isAuthenticated)
+{
+    <MudText>Hey there!</MudText>
+    <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="Logout"
+               StartIcon="@Icons.Material.Filled.Logout">
+        Log out
+    </MudButton>
+}
+else
+{
+    <MudButton Variant="Variant.Text" Color="Color.Default" StartIcon="@Icons.Material.Filled.AppRegistration"
+               Href="/login">
+        Login / Register
+    </MudButton>
+}
 
 @code{
-    private void BeginLogOut()
+    private bool isAuthenticated;
+
+    protected override async Task<Task> OnInitializedAsync()
     {
-        Navigation.NavigateToLogout("authentication/logout");
+        isAuthenticated = await AuthManager.IsAuthenticatedAsync();
+        
+        return base.OnInitializedAsync();
+    }
+
+    private async Task Logout()
+    {
+        await AuthManager.LogoutAsync();
+        Navigation.NavigateTo("/", forceLoad: true);
     }
 }

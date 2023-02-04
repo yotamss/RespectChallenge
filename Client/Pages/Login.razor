@@ -1,0 +1,63 @@
+﻿@page "/login"
+@using Respect.Client.Authentication
+@inject AccountRegistrar AccountRegistrar
+@inject Authenticator Authenticator
+@inject NavigationManager NavigationManager
+
+<div Style="padding: 15px; margin-top: 30px; text-align: center">
+    <h3 style="margin-bottom: 20px">Log In / Sign Up</h3>
+    @foreach (var error in errors)
+    {
+        <MudText Color="@Color.Error">@error</MudText>
+    }
+    <MudTextField @bind-Value="email" Placeholder="john_doe@abc.com" Variant="Variant.Outlined"
+                  style="margin-top: 10px" Immediate="true" HelperText="Enter your email" Required="true" RequiredError="Email is required"/>
+    <MudTextField @bind-Value="password" Placeholder="P@s$word123" Variant="Variant.Outlined"
+                  style="margin-top: 10px" Immediate="true" Required="true" HelperText="Enter a strong password" InputType="InputType.Password" RequiredError="Password is required"/>
+    <div style="margin-top: 20px">
+        <MudButton Disabled="@(!Filled)" Color="Color.Primary" Variant="Variant.Filled" OnClick="LogInAsync" Style="margin-right: 5px">Log In</MudButton>
+        <MudButton Disabled="@(!Filled)" Color="Color.Primary" Variant="Variant.Outlined" OnClick="RegisterAsync">Sign Up</MudButton>
+    </div>
+</div>
+
+@code{
+    private string? email;
+    private string? password;
+    private readonly List<string> errors = new();
+
+    private bool Filled => !string.IsNullOrWhiteSpace(email) && !string.IsNullOrWhiteSpace(password);
+
+    protected override void OnInitialized()
+    {
+    }
+
+    private async Task LogInAsync()
+    {
+        var result = await Authenticator.AuthenticateAsync(email!, password!);
+
+        if (result.Succeeded)
+        {
+            NavigationManager.NavigateTo("/", forceLoad: true);
+        }
+        else
+        {
+            errors.Clear();
+            errors.AddRange(result.Errors);
+        }
+    }
+
+    private async Task RegisterAsync()
+    {
+        var result = await AccountRegistrar.RegisterAsync(email!, password!);
+        if (result.Succeeded)
+        {
+            await LogInAsync();
+        }
+        else
+        {
+            errors.Clear();
+            errors.AddRange(result.Errors);
+        }
+    }
+
+}

@@ -1,18 +1,38 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+<MudThemeProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
 
-    <main>
-        <div class="top-row px-4 auth">
-            <LoginDisplay />
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
+<MudLayout Class="mud-height-full">
+    <MudAppBar Color="Color.Primary" Fixed="false">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="ToggleDrawer"/>
+        <MudIcon Icon="@Icons.Material.Outlined.Signpost" Color="Color.Inherit"/>
+        <MudText Typo="Typo.h6" Class="px-4">Respect</MudText>
+        <MudSpacer/>
+        <MudText Typo="Typo.body2" Class="px-4">Create, Share and Sign petitions</MudText>
+        <MudSpacer/>
+        <LoginDisplay/>
+    </MudAppBar>
+    @* <MudPaper MinHeight="500px"> *@
+    @* <MudDrawerContainer> *@
+    <MudDrawer @bind-Open="@open" DisableOverlay="true" Elevation="1" Variant="@DrawerVariant.Persistent"
+               Color="Color.Primary" Class="mud-height-full" ClipMode="DrawerClipMode.Always">
+        <NavMenu/>
+    </MudDrawer>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+    @* </MudDrawerContainer> *@
+    @* </MudPaper> *@
+</MudLayout>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+@code
+{
+    bool open = true;
+
+    void ToggleDrawer()
+    {
+        open = !open;
+    }
+}
