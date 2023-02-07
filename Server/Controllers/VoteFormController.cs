@@ -33,7 +33,8 @@ public class VoteFormController : ControllerBase
         if (petition is null)
             return NotFound();
 
-        var voteForm = new VoteForm(petition, voteFormRequest.FirstName, voteFormRequest.LastName);
+        var voteForm = voteFormManager.CreateVoteForm(petition, voteFormRequest.FirstName, voteFormRequest.LastName);
+        
         await petitionContext.VoteForms.AddAsync(voteForm);
         await petitionContext.SaveChangesAsync();
 
@@ -47,7 +48,7 @@ public class VoteFormController : ControllerBase
 
         if (voteForm is null)
             return NotFound();
-        
+
         try
         {
             voteFormManager.SetPhone(voteForm, voteFormRequest.Phone);
@@ -103,7 +104,7 @@ public class VoteFormController : ControllerBase
         {
             return UnprocessableEntity(new UserReflectedErrorResponse(e.Message));
         }
-        
+
         return Ok();
     }
 
