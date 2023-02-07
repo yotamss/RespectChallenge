@@ -33,16 +33,15 @@ public class SessionsController : ControllerBase
     public async Task<ActionResult<AuthenticationResult>> LogInAsync([FromBody] AuthenticationCredentials credentials)
     {
         var user = await signInManager.UserManager.FindByEmailAsync(credentials.Email);
-        
-        if (user is null) return BadRequest();
-        
+
+        if (user is null) return BadRequest(new UserReflectedErrorResponse("Incorrect login info"));
+
         var result = await signInManager.PasswordSignInAsync(user, credentials.Password, false, false);
-        
-        if (!result.Succeeded) return BadRequest();
-        
+
+        if (!result.Succeeded) return BadRequest(new UserReflectedErrorResponse("Incorrect login info"));
+
         var token = GenerateAccessToken(user);
         return new AuthenticationResult(token);
-
     }
 
     private string GenerateAccessToken(ApplicationUser user)

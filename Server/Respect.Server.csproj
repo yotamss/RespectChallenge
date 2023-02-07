@@ -29,10 +29,4 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Actions" />
-    <Folder Include="Data\Migrations" />
-    <Folder Include="Migrations\Petition" />
-  </ItemGroup>
-
 </Project>

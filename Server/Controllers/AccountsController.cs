@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Respect.Server.Data;
 using Respect.Server.Models;
 
 namespace Respect.Server.Controllers;
@@ -13,7 +12,6 @@ namespace Respect.Server.Controllers;
 public class AccountsController : ControllerBase
 {
     private readonly UserManager<ApplicationUser> userManager;
-    private readonly PetitionContext petitionContext;
 
     public AccountsController(UserManager<ApplicationUser> userManager)
     {

@@ -1,16 +1,23 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Respect.Server.Data;
+using Respect.Server.Logic;
 using Respect.Server.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
+                       throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<AuthenticationContext>(options =>
     options.UseSqlite(connectionString));
 
@@ -64,13 +71,55 @@ builder.Services.AddAuthentication(options =>
 
 JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
-
-
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    var scheme = new OpenApiSecurityScheme
+    {
+        Reference = new OpenApiReference
+        {
+            Type = ReferenceType.SecurityScheme,
+            Id = "Bearer"
+        },
+        Scheme = "oauth2",
+        Name = "Bearer",
+        In = ParameterLocation.Header
+    };
+    var requiredScopes = new List<string>();
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        [scheme] = requiredScopes
+    });
+});
+
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(_ =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: "GlobalPartitionKey",  // Max X requests per minute
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                AutoReplenishment = true,
+                PermitLimit = 1500,
+                QueueLimit = 0,
+                Window = TimeSpan.FromSeconds(15)
+            }));
+});
 
 var app = builder.Build();
+
+app.UseRateLimiter();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -106,7 +155,6 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
-
 
 app.MapRazorPages();
 app.MapControllers();

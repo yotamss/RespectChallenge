@@ -23,8 +23,8 @@ public class AccountRegistrar
         if (response.IsSuccessStatusCode)
             return new AuthenticationResult(Succeeded: true, Errors: ImmutableList<string>.Empty);
 
-        var errorResponses = await response.Content.ReadFromJsonAsync<ErrorResponse[]>(cancellationToken: cancellationToken).ConfigureAwait(false);
-        var errors = errorResponses!.Select(e => e.Description).ToImmutableList();
+        var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>(cancellationToken: cancellationToken).ConfigureAwait(false);
+        var errors = errorResponse!.Errors.ToImmutableList();
         return new AuthenticationResult(Succeeded: false, errors);
     }
 }
