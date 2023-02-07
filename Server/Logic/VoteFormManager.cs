@@ -67,6 +67,7 @@ public class VoteFormManager
 
     public Vote CreateVote(VoteForm voteForm, string verificationCode)
     {
+        // Rate limiting exists to prevent BF on the verification code
         if (voteForm.State != VoteFormState.AwaitingVerification)
             throw new VoteFormLogicalError("Phone not verified yet");
 
