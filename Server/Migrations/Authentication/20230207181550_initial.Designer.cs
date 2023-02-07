@@ -8,10 +8,10 @@ using Respect.Server.Data;
 
 #nullable disable
 
-namespace Respect.Server.Migrations
+namespace Respect.Server.Migrations.Authentication
 {
     [DbContext(typeof(AuthenticationContext))]
-    [Migration("20230204131906_initial")]
+    [Migration("20230207181550_initial")]
     partial class initial
     {
         /// <inheritdoc />

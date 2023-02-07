@@ -2,10 +2,11 @@ namespace Respect.Server.Models;
 
 public class Vote : Entity
 {
-    public Petition Petition { get;}
-    public string FirstName { get; }
-    public string LastName { get; }
-    public string Phone { get;}
+    public int PetitionId { get; private set; }
+    public Petition Petition { get; set; }
+    public string FirstName { get; private set; }
+    public string LastName { get; private set; }
+    public string Phone { get; private set; }
 
     public Vote()
     {
@@ -16,6 +17,6 @@ public class Vote : Entity
         FirstName = firstName;
         LastName = lastName;
         Phone = phone;
-        Petition = petition;
+        PetitionId = petition.Id;
     }
 }

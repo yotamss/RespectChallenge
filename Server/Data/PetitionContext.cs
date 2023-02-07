@@ -10,4 +10,6 @@ public class PetitionContext : DbContext
     {
     }
     public DbSet<Petition> Petitions { get; set; }
+    public DbSet<Vote> Votes { get; set; }
+    public DbSet<VoteForm> VoteForms { get; set; }
 }

@@ -29,6 +29,8 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
     .AddEntityFrameworkStores<AuthenticationContext>();
 
 builder.Services.AddAuthentication();
+builder.Services.AddTransient<VoteFormManager>();
+builder.Services.AddTransient<IVerificationCodeSender, SmsVerificationCodeSender>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {

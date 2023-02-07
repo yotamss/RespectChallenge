@@ -7,7 +7,7 @@ using Respect.Server.Data;
 
 #nullable disable
 
-namespace Respect.Server.Migrations
+namespace Respect.Server.Migrations.Authentication
 {
     [DbContext(typeof(AuthenticationContext))]
     partial class AuthenticationContextModelSnapshot : ModelSnapshot
