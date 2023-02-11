@@ -1,4 +1,5 @@
-﻿using Blazored.LocalStorage;
+﻿using System.Net.Http.Headers;
+using Blazored.LocalStorage;
 
 namespace Respect.Client.Authentication;
 
@@ -6,25 +7,24 @@ public class AuthManager
 {
     private readonly ITokenStore tokenStore;
 
-    public AuthManager(ITokenStore tokenStore)
+    public AuthManager(ITokenStore tokenStore, HttpClient httpClient)
     {
         this.tokenStore = tokenStore;
     }
 
-    public async Task SetTokenAsync(string? token)
+    public void SetToken(string? token)
     {
-        await tokenStore.SetTokenAsync(token);
+        tokenStore.SetToken(token);
     }
 
-    public async Task<bool> IsAuthenticatedAsync()
+    public bool IsAuthenticated()
     {
-        var token = await tokenStore.GetTokenAsync();
+        var token = tokenStore.GetToken();
         return token is not null;
     }
 
-    public async Task LogoutAsync()
+    public void Logout()
     {
-        await tokenStore.SetTokenAsync(null);
+        tokenStore.SetToken(null);
     }
-
 }

@@ -1,0 +1,39 @@
+﻿<MudTextField @bind-Value="firstName"
+              Placeholder="John"
+              Variant="Variant.Outlined"
+              style="margin-top: 10px"
+              Immediate="true"
+              HelperText="Enter your first name"
+              Required="true"
+              RequiredError="Required"/>
+
+<MudTextField @bind-Value="lastName"
+              Placeholder="Doe"
+              Variant="Variant.Outlined"
+              style="margin-top: 10px"
+              Immediate="true"
+              Required="true"
+              HelperText="Enter your last name"
+              RequiredError="Required"/>
+
+<div style="margin-top: 20px">
+    <MudButton Disabled="@(!Filled)" Color="Color.Primary" Variant="Variant.Filled" OnClick="CallCallbackAsync" Style="margin-right: 5px">Continue</MudButton>
+</div>
+
+
+@code {
+
+    private string? firstName;
+    private string? lastName;
+
+    private bool Filled => !string.IsNullOrWhiteSpace(firstName) && !string.IsNullOrWhiteSpace(lastName);
+
+    [Parameter]
+    public Func<string, string, Task> Callback { get; set; }
+
+    private async Task CallCallbackAsync()
+    {
+        await Callback(firstName, lastName);
+    }
+
+}

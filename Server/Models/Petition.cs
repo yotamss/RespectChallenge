@@ -9,7 +9,7 @@ public class Petition: Entity
     private const int MinimumTargetVotes = 5;
     
     public string OwnerId { get; private set; }  // Of type ApplicationUser.Id
-    
+    public string OwnerEmail { get; private set; }  // Denormalization cause I'm lazy
     public string Name { get; private set; }
     public string Description { get; private set; }
     public int TargetVotes { get; private set; }
@@ -31,6 +31,7 @@ public class Petition: Entity
             throw new TargetVotesTooSmall($"Target votes is {targetVotes} but it must be at least {MinimumTargetVotes}.");
         
         OwnerId = owner.Id;
+        OwnerEmail = owner.Email!;
         Name = name;
         Description = description;
         TargetVotes = targetVotes;

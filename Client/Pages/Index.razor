@@ -1,9 +1,46 @@
 ﻿@page "/"
+@using Respect.Client.Authentication
+@inject AuthManager AuthManager
+@inject NavigationManager NavigationManager
 
-<MudText Typo="Typo.h3">
-    Create, Share and Sign petitions!
-</MudText>
+<MudPaper Outlined="false" Elevation="0" class="d-flex justify-content-center align-content-center flex-wrap mb-5 mt-5">
+    <MudText Typo="Typo.h3">
+        Create, Share and Sign petitions!
+    </MudText>
+</MudPaper>
+<MudPaper Outlined="false" Elevation="0" class="d-flex justify-content-center align-content-center flex-wrap mb-5">
+    <MudText Typo="Typo.subtitle1">
+        Largest Petitions Website in the world with more than [some incorrect number] peoples participated.
+    </MudText>
+</MudPaper>
+<div class="m-5"></div>
+<MudPaper Outlined="false" Elevation="0" class="d-flex justify-content-center align-content-center flex-wrap mt-5">
+    @if (authenticated)
+    {
+        <MudButton Disabled="@(!authenticated)" Size="Size.Large" Color="Color.Primary" Variant="Variant.Filled" OnClick="CreatePetitionAsync">Create your petition</MudButton>
+    }
+    else
+    {
+        <MudTooltip Text="You must be logged in to create a petition">
+            <MudButton Disabled="@(!authenticated)" Size="Size.Large" Color="Color.Primary" Variant="Variant.Filled" OnClick="CreatePetitionAsync">Create your petition</MudButton>
+        </MudTooltip>
+    }
+</MudPaper>
+<div class="m-5"></div>
+<Petitions></Petitions>
 
-<MudText Typo="Typo.h4">
-    Latest petitions:
-</MudText>
+@code{
+    private bool authenticated;
+
+    protected override Task OnInitializedAsync()
+    {
+        authenticated = AuthManager.IsAuthenticated();
+        return base.OnInitializedAsync();
+    }
+
+    private void CreatePetitionAsync()
+    {
+        NavigationManager.NavigateTo("/petition/create");
+    }
+
+}

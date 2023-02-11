@@ -6,20 +6,20 @@ public class LocalStorageTokenStore : ITokenStore
 {
     private const string Key = "Token";
     
-    private readonly ILocalStorageService localStorage;
+    private readonly ISyncLocalStorageService localStorage;
 
-    public LocalStorageTokenStore(ILocalStorageService localStorage)
+    public LocalStorageTokenStore(ISyncLocalStorageService localStorage)
     {
         this.localStorage = localStorage;
     }
 
-    public async Task<string?> GetTokenAsync()
+    public string GetToken()
     {
-        return await localStorage.GetItemAsync<string>(Key);
+        return localStorage.GetItem<string>(Key);
     }
 
-    public async Task SetTokenAsync(string? token)
+    public void SetToken(string? token)
     {
-        await localStorage.SetItemAsync(Key, token);
+        localStorage.SetItem(Key, token);
     }
 }

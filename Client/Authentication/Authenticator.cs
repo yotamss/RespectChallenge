@@ -28,7 +28,7 @@ public class Authenticator
             var responseContent = await response.Content.ReadFromJsonAsync<SuccessfulAuthenticationResponse>(
                 cancellationToken: cancellationToken).ConfigureAwait(false);
 
-            await authManager.SetTokenAsync(responseContent!.AccessToken);
+            authManager.SetToken(responseContent!.AccessToken);
             
             return new AuthenticationResult(Succeeded: true, Errors: ImmutableList<string>.Empty);
         }

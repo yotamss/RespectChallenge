@@ -9,7 +9,6 @@ using Respect.Server.Models;
 namespace Respect.Server.Controllers;
 
 [ApiController]
-[Authorize]
 [Route("[controller]")]
 public class VoteFormController : ControllerBase
 {
@@ -38,7 +37,7 @@ public class VoteFormController : ControllerBase
         await petitionContext.VoteForms.AddAsync(voteForm);
         await petitionContext.SaveChangesAsync();
 
-        return Ok(voteForm.Id);
+        return Ok(new {voteForm.Id});
     }
 
     [HttpPatch("{id}/phone")]

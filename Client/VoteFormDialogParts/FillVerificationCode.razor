@@ -1,0 +1,30 @@
+﻿<MudTextField @bind-Value="verificationCode"
+              Placeholder="1 6 4 0 2 1"
+              Variant="Variant.Outlined"
+              style="margin-top: 10px"
+              Immediate="true"
+              HelperText="Enter the verification code sent to your phone"
+              Required="true"
+              RequiredError="Required"
+              Mask="@(new PatternMask("0 0 0 0 0 0"))"/>
+
+<div style="margin-top: 20px">
+    <MudButton Disabled="@(!Filled)" Color="Color.Primary" Variant="Variant.Filled" OnClick="CallCallbackAsync" Style="margin-right: 5px">Continue</MudButton>
+</div>
+
+
+@code {
+    private bool Filled => !string.IsNullOrWhiteSpace(verificationCode);
+    
+    [Parameter]
+    public Func<string, Task> Callback { get; set; }
+
+    private async Task CallCallbackAsync()
+    {
+        var onlyDigits = verificationCode.Where(char.IsDigit).ToArray();
+        
+        await Callback(new string(onlyDigits));
+    }
+
+    private string? verificationCode;
+}

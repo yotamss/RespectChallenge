@@ -31,7 +31,7 @@ public class AccountsController : ControllerBase
         if (result.Succeeded)
             return Ok();
 
-        return BadRequest(result.Errors);
+        return BadRequest(result.Errors);  // todo: my custom format should be changed to this: [{"code":"InvalidEmail","description":"Email 'balgksdlg' is invalid."}]
     }
 
     public record RegistrationRequest(string Email, string Password);

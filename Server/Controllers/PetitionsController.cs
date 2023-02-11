@@ -10,7 +10,6 @@ using Respect.Server.Models;
 namespace Respect.Server.Controllers;
 
 [ApiController]
-[Authorize]
 [Route("[controller]")]
 public class PetitionsController : ControllerBase
 {
@@ -23,26 +22,26 @@ public class PetitionsController : ControllerBase
         this.petitionContext = petitionContext;
     }
 
+    [Authorize]
     [HttpPost]
-    public async Task<IActionResult> CreatePetitionAsync(CreatePetitionRequest request)
+    public async Task<ActionResult<Petition>> CreatePetitionAsync(CreatePetitionRequest request)
     {
         var currentUser = await userManager.FindByEmailAsync(HttpContext.User.Identity!.Name!);
-        
+
         if (currentUser is null)
             return BadRequest("Could not find user.");
-        
+
         try
         {
             var petition = new Petition(currentUser, request.Name, request.Description, request.targetVotes);
             await petitionContext.Petitions.AddAsync(petition);
             await petitionContext.SaveChangesAsync();
+            return Ok(petition);
         }
         catch (TargetVotesTooSmall e)
         {
             return UnprocessableEntity(new UserReflectedErrorResponse(e.Message));
         }
-
-        return Ok();
     }
 
     [HttpGet("{id}")]
@@ -51,11 +50,17 @@ public class PetitionsController : ControllerBase
         var petition = await petitionContext.Petitions
             .Include(p => p.Votes)
             .FirstOrDefaultAsync(p => p.Id == id);
-        
-        if (petition is not null)
-            return Ok(petition);
 
-        return NotFound();
+        if (petition is null) return NotFound();
+
+        JsonSerializerOptions options = new()
+        {
+            ReferenceHandler = ReferenceHandler.IgnoreCycles,
+            WriteIndented = true
+        };
+        var serialized = JsonSerializer.Serialize(petition, options);
+
+        return Ok(serialized);
     }
 
     [HttpGet]
@@ -66,15 +71,15 @@ public class PetitionsController : ControllerBase
             .AsNoTracking()
             .OrderByDescending(p => p.Id)
             .ToListAsync();
-        
+
         JsonSerializerOptions options = new()
         {
             ReferenceHandler = ReferenceHandler.IgnoreCycles,
             WriteIndented = true
         };
-        
+
         var serialized = JsonSerializer.Serialize(petitions, options);
-        
+
         return Ok(serialized);
     }
 

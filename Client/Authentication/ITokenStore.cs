@@ -2,6 +2,6 @@
 
 public interface ITokenStore
 {
-    Task<string?> GetTokenAsync();
-    Task SetTokenAsync(string? token);
+    string GetToken();
+    void SetToken(string? token);
 }

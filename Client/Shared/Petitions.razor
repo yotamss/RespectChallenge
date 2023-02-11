@@ -1,0 +1,51 @@
+﻿@using Respect.Client.Authentication
+@using Respect.Client.DTO
+@using Respect.Client.Accessors
+@inject NavigationManager Navigation
+@inject HttpClient HttpClient
+@inject AuthManager AuthManager
+@inject PetitionsManager PetitionsManager
+
+<MudText class="ma-5 pa-5" Typo="Typo.h4">
+    Latest petitions:
+</MudText>
+<MudPaper Class="ma-5 d-flex flex-wrap flex-grow-1 justify-content-center align-content-center" Elevation="0" Outlined="false">
+    @foreach (var petition in petitions)
+    {
+        <MudCard Outlined="true" Elevation="3" Class="ma-2" Style="width: 29%" >
+            <MudCardContent>
+                <CardHeaderAvatar>
+                    <MudAvatar Color="Color.Secondary">@petition.OwnerEmail.ToUpper()[0]</MudAvatar>
+                </CardHeaderAvatar>
+                <MudText Typo="Typo.h6" Class="mb-2 mt-2">
+                    @petition.Name
+                </MudText>
+                <MudText Typo="Typo.body2">@petition.Description</MudText>
+                <MudProgressLinear Class="mt-2"
+                                   Color="Color.Success"
+                                   Striped="true"
+                                   Value="@(petition.Votes.Count * 100 / petition.TargetVotes)"
+                                   Size="Size.Large">
+                </MudProgressLinear>
+                
+                    <MudText Typo="Typo.subtitle2" Color="Color.Dark">
+                        @(@petition.TargetVotes - petition.Votes.Count) signatures left to reach the goal (@petition.Votes.Count/@petition.TargetVotes)
+                    </MudText>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@("petition/"+ @petition.Id)">LEARN MORE</MudButton>
+            </MudCardActions>
+        </MudCard>
+    }
+</MudPaper>
+
+@code{
+    private ICollection<PetitionDto> petitions = new List<PetitionDto>();
+
+    protected override async Task<Task> OnInitializedAsync()
+    {
+        petitions = await PetitionsManager.ListAllPetitionsAsync();
+        return base.OnInitializedAsync();
+    }
+
+}

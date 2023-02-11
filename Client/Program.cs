@@ -1,9 +1,12 @@
+using System.Net.Http.Headers;
 using Blazored.LocalStorage;
+using Blazored.LocalStorage.StorageOptions;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
 using Respect.Client;
+using Respect.Client.Accessors;
 using Respect.Client.Authentication;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -19,15 +22,20 @@ builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().Cre
 builder.Services.AddMudServices();
 builder.Services.AddTransient<Authenticator>();
 builder.Services.AddTransient<AccountRegistrar>();
+builder.Services.AddBlazoredLocalStorageAsSingleton();
+builder.Services.AddTransient<ITokenStore, LocalStorageTokenStore>();
+builder.Services.AddTransient<AuthManager>();
+builder.Services.AddTransient<PetitionsManager>();
+builder.Services.AddTransient<VoteFormsManager>();
+
 builder.Services.AddHttpClient("serverHttpClient", (serviceProvider, client) =>
 {
     client.BaseAddress = new Uri("http://localhost:7355");
+    var accessToken = serviceProvider.GetRequiredService<ITokenStore>().GetToken();
+    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 });
 
 builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("serverHttpClient"));
 
-builder.Services.AddBlazoredLocalStorage();
-builder.Services.AddTransient<ITokenStore, LocalStorageTokenStore>();
-builder.Services.AddTransient<AuthManager>();
 
 await builder.Build().RunAsync();

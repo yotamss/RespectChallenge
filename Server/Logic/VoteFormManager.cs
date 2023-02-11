@@ -10,7 +10,8 @@ public class VoteFormManager
     private readonly IVerificationCodeSender verificationCodeSender;
     private readonly ILogger<VoteFormManager> logger;
 
-    public VoteFormManager(PetitionContext petitionContext, IVerificationCodeSender verificationCodeSender, ILogger<VoteFormManager> logger)
+    public VoteFormManager(PetitionContext petitionContext, IVerificationCodeSender verificationCodeSender,
+        ILogger<VoteFormManager> logger)
     {
         this.petitionContext = petitionContext;
         this.verificationCodeSender = verificationCodeSender;
@@ -24,13 +25,13 @@ public class VoteFormManager
 
     public void SetPhone(VoteForm voteForm, string phone)
     {
+        phone = NormalizePhone(phone);
+
         if (voteForm.State != VoteFormState.AwaitingPhoneNumber)
             throw new VoteFormLogicalError("Phone number already set for this vote form");
-    
+
         if (petitionContext.Votes.Any(v => v.Phone == phone))
             throw new VoteFormLogicalError("A person already voted with this phone number");
-
-        phone = NormalizePhone(phone);
         
         voteForm.Phone = phone;
         voteForm.State = VoteFormState.AwaitingVerification;
@@ -47,11 +48,11 @@ public class VoteFormManager
     {
         if (voteForm.State != VoteFormState.AwaitingVerification)
             throw new VoteFormLogicalError("State is incorrect, could not send verification code");
-        
+
         voteForm.VerificationCode = GenerateVerificationCode();
         await petitionContext.SaveChangesAsync();
         logger.LogInformation($"Generated new verification code: {voteForm.VerificationCode}");
-        
+
         await verificationCodeSender.SendAsync(voteForm.VerificationCode, voteForm.Phone);
     }
 

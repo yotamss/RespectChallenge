@@ -1,0 +1,56 @@
+﻿@page "/petition/create"
+@using Respect.Client.DTO
+@using Respect.Client.Accessors
+@using Respect.Client.Authentication
+@using System.Collections.Immutable
+@inject PetitionsManager PetitionsManager
+@inject NavigationManager NavigationManager
+
+<MudPaper Class="pa-4 ma-4" Elevation="0" Outlined="false">
+    <div class="d-flex justify-content-center">
+        <MudText Typo="Typo.h2">Create a petition</MudText>
+    </div>
+    <MudForm @ref="form" @bind-IsValid="@success">
+        <MudTextField @bind-Value="name" Label="Petition Name" Required="true" RequiredError="Name is required!"/>
+        <MudTextField @bind-Value="description" Label="Description" Required="true" RequiredError="Description is required!"/>
+        <MudNumericField Label="Target votes (minimum=5)"
+                         @bind-Value="targetVotes"
+                         Min="5"/>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="CreatePetitionAsync" Class="ml-auto mt-5">Create petition</MudButton>
+    </MudForm>
+</MudPaper>
+<MudPaper Class="pa-4 mud-height-full">
+    @foreach (var error in errors)
+    {
+        <MudText Color="@Color.Error">@error</MudText>
+    }
+</MudPaper>
+
+@code
+{
+    [Parameter]
+    public int PetitionId { get; set; }
+
+    public async Task CreatePetitionAsync()
+    {
+        var petitionRequest = new CreatePetitionRequest(name, description, targetVotes);
+        var response = await PetitionsManager.CreatePetitionAsync(petitionRequest);
+        if (response.IsSuccessStatusCode)
+        {
+            var petition = await response.Content.ReadFromJsonAsync<PetitionDto>();
+            NavigationManager.NavigateTo($"/petition/{petition.Id}");
+        }
+        else
+        {
+            var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+            errors = errorResponse!.Errors.ToImmutableList();
+        }
+    }
+
+    private MudForm form;
+    private bool success;
+    private string name;
+    private string description;
+    private int targetVotes = 5;
+    private ImmutableList<string> errors = ImmutableList<string>.Empty;
+}

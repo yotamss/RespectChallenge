@@ -5,17 +5,21 @@
 @inject HttpClient HttpClient
 @inject AuthManager AuthManager
 
+<MudText>Create, Share and Sign your petitions</MudText>
+<MudSpacer></MudSpacer>
+
 @if (isAuthenticated)
 {
-    <MudText>Hey there!</MudText>
-    <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="Logout"
+    <MudText>Hey user! </MudText>
+    @* <MudSpacer></MudSpacer> *@
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="Logout"
                StartIcon="@Icons.Material.Filled.Logout">
         Log out
     </MudButton>
 }
 else
 {
-    <MudButton Variant="Variant.Text" Color="Color.Default" StartIcon="@Icons.Material.Filled.AppRegistration"
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" StartIcon="@Icons.Material.Filled.AppRegistration"
                Href="/login">
         Login / Register
     </MudButton>
@@ -24,16 +28,17 @@ else
 @code{
     private bool isAuthenticated;
 
-    protected override async Task<Task> OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
-        isAuthenticated = await AuthManager.IsAuthenticatedAsync();
-        
+        isAuthenticated = AuthManager.IsAuthenticated();
+
         return base.OnInitializedAsync();
     }
 
-    private async Task Logout()
+    private void Logout()
     {
-        await AuthManager.LogoutAsync();
+        AuthManager.Logout();
         Navigation.NavigateTo("/", forceLoad: true);
     }
+
 }

@@ -1,0 +1,146 @@
+﻿@using Respect.Client.Accessors
+@using System.Collections.Immutable
+@using Respect.Client.Authentication
+@using Respect.Client.VoteFormDialogParts
+@inject VoteFormsManager VoteFormsManager
+
+<MudDialog>
+    <DialogContent>
+        @switch (State)
+        {
+            case VoteFormState.Creating:
+                <CreatePart Callback="CreateNewAsync"/>
+                break;
+            case VoteFormState.AwaitingPhoneNumber:
+                <AddPhone Callback="AddPhoneAsync"/>
+                break;
+            case VoteFormState.AwaitingVerification:
+                <FillVerificationCode Callback="VerifyCodeAsync"/>
+                break;
+            case VoteFormState.VoteCreated:
+                <p>Done, thanks</p>
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        @foreach (var error in errors)
+        {
+            <MudText Color="@Color.Error">@error</MudText>
+        }
+    </DialogContent>
+    @* <DialogActions> *@
+    @*     <MudButton OnClick="Cancel">Cancel</MudButton> *@
+    @*     <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton> *@
+    @* </DialogActions> *@
+</MudDialog>
+
+@code {
+    public string CurrentVoteFormId { get; set; }
+
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public int PetitionId { get; set; }
+
+
+    public VoteFormState State { get; set; }
+
+    public enum VoteFormState
+    {
+        Creating,
+        AwaitingPhoneNumber,
+        AwaitingVerification,
+        VoteCreated,
+    }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        State = VoteFormState.Creating;
+        await base.OnInitializedAsync();
+    }
+
+    private async Task CreateNewAsync(string firstName, string lastName)
+    {
+        errors = new List<string>();
+
+        var result = await VoteFormsManager.CreateVoteFormAsync(
+            new CreateVoteFormRequest(firstName!, lastName!, PetitionId)
+            );
+
+        var voteResponse = await TryDeserializeAsync<VoteFormIdRespone>(result);
+
+        if (voteResponse is not null)
+        {
+            CurrentVoteFormId = voteResponse.Id;
+            State = VoteFormState.AwaitingPhoneNumber;
+            StateHasChanged();
+        }
+        else
+        {
+            var errorResponse = await result.Content.ReadFromJsonAsync<ErrorResponse>();
+            errors = errorResponse!.Errors.ToImmutableList();
+        }
+    }
+
+    private async Task AddPhoneAsync(string phone)
+    {
+        errors = new List<string>();
+
+        var result = await VoteFormsManager.AddPhoneAsync(new AddPhoneRequest(phone), CurrentVoteFormId);
+
+        if (result.IsSuccessStatusCode)
+        {
+            await VoteFormsManager.AskForVerificationCodeAsync(CurrentVoteFormId);
+            State = VoteFormState.AwaitingVerification;
+            StateHasChanged();
+        }
+        else
+        {
+            await HandleErrorsAsync(result);
+        }
+    }
+
+    private async Task VerifyCodeAsync(string code)
+    {
+        errors = new List<string>();
+
+        var result = await VoteFormsManager.VerifyCodeRequestAsync(new VerifyCodeRequest(code), CurrentVoteFormId);
+
+        if (result.IsSuccessStatusCode)
+        {
+            State = VoteFormState.VoteCreated;
+            StateHasChanged();
+        }
+        else
+        {
+            await HandleErrorsAsync(result);
+        }
+    }
+
+    private IEnumerable<string> errors = ImmutableList<string>.Empty;
+
+    record VoteFormIdRespone(string Id);
+
+    private async Task<T?> TryDeserializeAsync<T>(HttpResponseMessage response)
+    {
+        if (response.IsSuccessStatusCode)
+        {
+            return await response.Content.ReadFromJsonAsync<T>();
+        }
+
+        await HandleErrorsAsync(response);
+        return default;
+    }
+
+    private async Task HandleErrorsAsync(HttpResponseMessage response)
+    {
+        var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+        errors = errorResponse!.Errors.ToImmutableList();
+        StateHasChanged();
+    }
+
+}

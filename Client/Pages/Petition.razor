@@ -1,0 +1,122 @@
+﻿@page "/petition/{PetitionId:int}"
+@using Respect.Client.DTO
+@using Respect.Client.Accessors
+@inject PetitionsManager PetitionsManager
+@inject IDialogService DialogService
+
+@if (loading)
+{
+    <MudProgressCircular>Loading</MudProgressCircular>
+}
+else
+{
+    @if (PetitionDto is null)
+    {
+        <MudText>Petition not found</MudText>
+    }
+    else
+    {
+        <MudCard Outlined="true" Elevation="4" Class="ma-4">
+            <MudCardContent>
+                <div class="d-flex justify-content-center align-content-center flex-wrap mb-5">
+                    <MudText Typo="Typo.h4">
+                        @PetitionDto.Name
+                    </MudText>
+                </div>
+                <div class="d-flex justify-content-center align-content-center flex-wrap mb-5">
+                    <MudText Typo="Typo.body2">
+                        @PetitionDto.Description
+                    </MudText>
+                </div>
+                <div class="d-flex justify-content-center align-content-center flex-wrap mb-5">
+                    <MudText Typo="Typo.body2">
+                        Petition owner: @PetitionDto.OwnerEmail.Split("@")[0]@@******.@PetitionDto.OwnerEmail.Split("@")[1].Split(".")[1]
+                    </MudText>
+                </div>
+                <div class="d-flex justify-content-center align-content-center flex-wrap mb-5">
+                    <MudSpacer></MudSpacer>
+                    <MudImage Src="/Images/petition.jpg" Width="200" Elevation="25" Class="rounded-lg"/>
+                    <MudSpacer></MudSpacer>
+                </div>
+                <MudDivider DividerType="DividerType.Middle" Class="my-6"/>
+                <MudText Typo="Typo.subtitle1">To get the flag, the owner of this petition need to reach @PetitionDto.TargetVotes votes!</MudText>
+                <MudProgressLinear
+                    Color="Color.Success"
+                    Striped="true"
+                    Value="@(PetitionDto.Votes.Count * 100 / PetitionDto.TargetVotes)"
+                    Size="Size.Large">
+                    <MudText Typo="Typo.subtitle2" Color="Color.Dark">
+                        (@PetitionDto.Votes.Count/@PetitionDto.TargetVotes)
+                    </MudText>
+                </MudProgressLinear>
+                <MudText Typo="Typo.subtitle1" Color="Color.Dark">
+                    @(PetitionDto.TargetVotes - PetitionDto.Votes.Count) signatures left to get the flag!
+                </MudText>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Text" Color="Color.Primary" Class="ml-3" OnClick="OpenDialog">Sign petition</MudButton>
+                @if (PetitionDto.Votes.Count < PetitionDto.TargetVotes)
+                {
+                    <MudTooltip Text="You must be the owner of the petition and reach the target goal to get the flag">
+                        <MudButton  Class="mr-3" Variant="Variant.Outlined"
+                                   Color="Color.Primary"
+                                   Disabled="@(PetitionDto.Votes.Count < PetitionDto.TargetVotes)">
+                            Get the flag
+                        </MudButton>
+                    </MudTooltip>
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Outlined"
+                               Class="mr-3"
+                               Color="Color.Primary"
+                               Disabled="@(PetitionDto.Votes.Count < PetitionDto.TargetVotes)">
+                        Get the flag
+                    </MudButton>
+                }
+            </MudCardActions>
+
+        </MudCard>
+        <MudCard Class="ma-4" Elevation="4">
+            <MudCardHeader>
+                <MudText Typo="Typo.h5">
+                    Latest signers:
+                </MudText>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudList>
+                    @foreach (var vote in PetitionDto.Votes)
+                    {
+                        @* <MudAvatar Color="Color.Secondary">@(vote.FirstName[0].ToString() + vote.LastName[0])</MudAvatar> *@
+                        <MudListItem Dense="true" Text="@(vote.FirstName + " " + vote.LastName)" Value="1"/>
+                        @* <MudDivider DividerType="DividerType.FullWidth"></MudDivider> *@
+                    }
+                </MudList>
+            </MudCardContent>
+        </MudCard>
+    }
+}
+
+@code
+{
+    [Parameter]
+    public int PetitionId { get; set; }
+
+    public PetitionDto? PetitionDto { get; set; }
+    public bool loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        PetitionDto = await PetitionsManager.GetPetitionAsync(PetitionId);
+        loading = false;
+        await base.OnInitializedAsync();
+    }
+    
+    private void OpenDialog()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var parameters = new DialogParameters();
+        parameters.Add("petitionId", PetitionDto.Id);
+        DialogService.Show<VoteFormDialog>("Simple Dialog", parameters, options);
+    }
+}

@@ -1,0 +1,28 @@
+﻿<MudTextField @bind-Value="phone"
+              Placeholder="(555) 555-1234"
+              Variant="Variant.Outlined"
+              style="margin-top: 10px"
+              Immediate="true"
+              HelperText="Enter your US phone number"
+              Required="true"
+              RequiredError="Required"
+              Mask="@(new PatternMask("(000) 000-0000"))"/>
+
+<div style="margin-top: 20px">
+    <MudButton Disabled="@(!Filled)" Color="Color.Primary" Variant="Variant.Filled" OnClick="CallCallbackAsync" Style="margin-right: 5px">Continue</MudButton>
+</div>
+
+
+@code {
+    private bool Filled => !string.IsNullOrWhiteSpace(phone);
+    
+    [Parameter]
+    public Func<string, Task> Callback { get; set; }
+
+    private async Task CallCallbackAsync()
+    {
+        await Callback(phone!);
+    }
+
+    private string? phone;
+}
