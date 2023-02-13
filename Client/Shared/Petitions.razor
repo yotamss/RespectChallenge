@@ -29,7 +29,7 @@
                 </MudProgressLinear>
                 
                     <MudText Typo="Typo.subtitle2" Color="Color.Dark">
-                        @(@petition.TargetVotes - petition.Votes.Count) signatures left to reach the goal (@petition.Votes.Count/@petition.TargetVotes)
+                        @(petition.TargetVotes - petition.Votes.Count >= 0 ? petition.TargetVotes - petition.Votes.Count : 0) signatures left to reach the goal (@petition.Votes.Count/@petition.TargetVotes)
                     </MudText>
             </MudCardContent>
             <MudCardActions>

@@ -18,7 +18,12 @@
                 <FillVerificationCode Callback="VerifyCodeAsync"/>
                 break;
             case VoteFormState.VoteCreated:
-                <p>Done, thanks</p>
+                <MudPaper Outlined="false" Elevation="0" class="d-flex justify-content-center align-content-center flex-wrap mb-5 mt-5">
+                <MudAvatar Color="Color.Success">
+                    <MudIcon Icon="@Icons.Material.Filled.Check"></MudIcon>
+                </MudAvatar>
+                <p>Vote registered</p>
+                </MudPaper>
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -28,10 +33,6 @@
             <MudText Color="@Color.Error">@error</MudText>
         }
     </DialogContent>
-    @* <DialogActions> *@
-    @*     <MudButton OnClick="Cancel">Cancel</MudButton> *@
-    @*     <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton> *@
-    @* </DialogActions> *@
 </MudDialog>
 
 @code {

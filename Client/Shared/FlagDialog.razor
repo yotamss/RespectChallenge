@@ -1,0 +1,20 @@
+﻿@using Respect.Client.Accessors
+@inject PetitionsManager PetitionsManager
+
+<MudDialog>
+    <DialogContent>
+        <MudText>@Message.Message</MudText>
+    </DialogContent>
+</MudDialog>
+
+@code {
+
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+    
+    [Parameter]
+    public FlagResponse? Message { get; set; }
+
+    [Parameter]
+    public int PetitionId { get; set; }
+}

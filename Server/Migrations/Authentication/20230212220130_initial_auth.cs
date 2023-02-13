@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Respect.Server.Migrations.Authentication
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class initialauth : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

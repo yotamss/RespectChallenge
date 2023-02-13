@@ -63,6 +63,31 @@ public class PetitionsController : ControllerBase
         return Ok(serialized);
     }
 
+    [HttpGet("{id}/flag")]
+    public async Task<ActionResult<Petition>> GetFlagForAsync(int id)
+    {
+        var currentUser = await userManager.FindByEmailAsync(HttpContext.User.Identity!.Name!);
+
+        if (currentUser is null)
+            return Ok(new { Message = "Could not find user, login first." });
+
+
+        var petition = await petitionContext.Petitions
+            .Include(p => p.Votes)
+            .FirstOrDefaultAsync(p => p.Id == id);
+
+        if (petition is null) return Ok(new { Message = "Petition not found." });
+
+        if (currentUser.Id != petition.OwnerEmail)
+            return Ok(new { Message = "You are not the owner of this petition, only owners can get the flag." });
+
+        if (petition.Votes.Count < petition.TargetVotes)
+            return Ok(new { Message = "Votes amount must be more than the target votes to get the flag." });
+
+        return Ok("HTB{TOCTOU_TO_THE_HAND}");
+    }
+
+
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Petition>>> ListPetitionsAsync()
     {

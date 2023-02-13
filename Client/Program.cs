@@ -27,6 +27,7 @@ builder.Services.AddTransient<ITokenStore, LocalStorageTokenStore>();
 builder.Services.AddTransient<AuthManager>();
 builder.Services.AddTransient<PetitionsManager>();
 builder.Services.AddTransient<VoteFormsManager>();
+builder.Services.AddTransient<MyPhoneManager>();
 
 builder.Services.AddHttpClient("serverHttpClient", (serviceProvider, client) =>
 {

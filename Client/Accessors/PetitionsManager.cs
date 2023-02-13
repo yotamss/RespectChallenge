@@ -26,6 +26,13 @@ public class PetitionsManager
     {
         return await httpClient.GetFromJsonAsync<PetitionDto?>($"/Petitions/{petitionId}");
     }
+    
+    public async Task<FlagResponse?> GetFlagAsync(int petitionId)
+    {
+        return await httpClient.GetFromJsonAsync<FlagResponse>($"/Petitions/{petitionId}/flag");
+    }
 }
+
+public record FlagResponse(string Message);
 
 public record CreatePetitionRequest(string Name, string Description, int TargetVotes);

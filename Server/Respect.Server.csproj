@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>Respect.Server-9bb9c26a-1beb-4400-bdf3-53b6fcf56922</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,7 +19,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Client\Respect.Client.csproj" />
-    <ProjectReference Include="..\Shared\Respect.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +27,12 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\.dockerignore">
+      <Link>.dockerignore</Link>
+    </Content>
   </ItemGroup>
 
 </Project>

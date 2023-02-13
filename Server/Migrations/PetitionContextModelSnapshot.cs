@@ -46,6 +46,25 @@ namespace Respect.Server.Migrations
                     b.ToTable("Petitions");
                 });
 
+            modelBuilder.Entity("Respect.Server.Models.Sms", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SmsSet");
+                });
+
             modelBuilder.Entity("Respect.Server.Models.Vote", b =>
                 {
                     b.Property<int>("Id")

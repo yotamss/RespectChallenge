@@ -10,8 +10,8 @@ using Respect.Server.Data;
 namespace Respect.Server.Migrations
 {
     [DbContext(typeof(PetitionContext))]
-    [Migration("20230208070832_0002owneremail")]
-    partial class _0002owneremail
+    [Migration("20230212220100_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,6 +47,25 @@ namespace Respect.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Petitions");
+                });
+
+            modelBuilder.Entity("Respect.Server.Models.Sms", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SmsSet");
                 });
 
             modelBuilder.Entity("Respect.Server.Models.Vote", b =>

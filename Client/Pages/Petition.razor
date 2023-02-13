@@ -50,7 +50,7 @@ else
                     </MudText>
                 </MudProgressLinear>
                 <MudText Typo="Typo.subtitle1" Color="Color.Dark">
-                    @(PetitionDto.TargetVotes - PetitionDto.Votes.Count) signatures left to get the flag!
+                    @(PetitionDto.TargetVotes - PetitionDto.Votes.Count >= 0 ? PetitionDto.TargetVotes - PetitionDto.Votes.Count : 0) signatures left to get the flag!
                 </MudText>
             </MudCardContent>
             <MudCardActions>
@@ -70,7 +70,7 @@ else
                     <MudButton Variant="Variant.Outlined"
                                Class="mr-3"
                                Color="Color.Primary"
-                               Disabled="@(PetitionDto.Votes.Count < PetitionDto.TargetVotes)">
+                               Disabled="@(PetitionDto.Votes.Count < PetitionDto.TargetVotes)" OnClick="ShowFlagAsync">
                         Get the flag
                     </MudButton>
                 }
@@ -117,6 +117,17 @@ else
         var options = new DialogOptions { CloseOnEscapeKey = true };
         var parameters = new DialogParameters();
         parameters.Add("petitionId", PetitionDto.Id);
-        DialogService.Show<VoteFormDialog>("Simple Dialog", parameters, options);
+        DialogService.Show<VoteFormDialog>("Vote", parameters, options);
+    }
+
+    private async Task ShowFlagAsync()
+    {
+        var message = await PetitionsManager.GetFlagAsync(PetitionId);
+        
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var parameters = new DialogParameters();
+        parameters.Add("PetitionId", PetitionDto.Id);
+        parameters.Add("Message", message);
+        DialogService.Show<FlagDialog>("Flag", parameters, options);
     }
 }

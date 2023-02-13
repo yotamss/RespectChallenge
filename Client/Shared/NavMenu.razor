@@ -1,10 +1,28 @@
-﻿<MudNavMenu>
-    <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
-    <MudNavLink Href="/servers" Icon="@Icons.Material.Filled.Dashboard">Servers</MudNavLink>
-    <MudNavLink Href="/billing" Icon="@Icons.Material.Filled.Dashboard" Disabled="true">Billing</MudNavLink>
-    <MudNavGroup Title="Settings" Expanded="true">
-        <MudNavLink Href="/users">Users</MudNavLink>
-        <MudNavLink Href="/security">Security</MudNavLink>
-    </MudNavGroup>
-    <MudNavLink Href="/about">About</MudNavLink>
+﻿@using Respect.Client.Authentication
+@inject AuthManager AuthManager
+
+<style>
+    .mud-nav-link:hover:not(.mud-nav-link-disabled){
+    background-color: white !important;
+    }
+</style>
+
+<MudNavMenu Color="Color.Warning">
+    @if (authenticated)
+    {
+        <MudNavLink Href="/petition/create" Icon="@Icons.Material.Filled.Add" IconColor="@Color.Surface">Create a petition</MudNavLink>
+    }
+    <MudNavLink Href="/phone" Icon="@Icons.Material.Filled.PhoneIphone" IconColor="@Color.Surface">Your phone</MudNavLink>
 </MudNavMenu>
+
+@code
+{
+    private bool authenticated;
+
+    protected override Task OnInitializedAsync()
+    {
+        authenticated = AuthManager.IsAuthenticated();
+        return base.OnInitializedAsync();
+    }
+
+}

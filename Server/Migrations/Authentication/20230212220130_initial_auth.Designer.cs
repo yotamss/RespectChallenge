@@ -11,8 +11,8 @@ using Respect.Server.Data;
 namespace Respect.Server.Migrations.Authentication
 {
     [DbContext(typeof(AuthenticationContext))]
-    [Migration("20230207181550_initial")]
-    partial class initial
+    [Migration("20230212220130_initial_auth")]
+    partial class initialauth
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

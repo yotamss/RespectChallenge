@@ -17,6 +17,7 @@ namespace Respect.Server.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     OwnerId = table.Column<string>(type: "TEXT", nullable: false),
+                    OwnerEmail = table.Column<string>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: false),
                     TargetVotes = table.Column<int>(type: "INTEGER", nullable: false)
@@ -24,6 +25,20 @@ namespace Respect.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Petitions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SmsSet",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    PhoneNumber = table.Column<string>(type: "TEXT", nullable: false),
+                    Text = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SmsSet", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -85,6 +100,9 @@ namespace Respect.Server.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "SmsSet");
+
             migrationBuilder.DropTable(
                 name: "VoteForms");
 

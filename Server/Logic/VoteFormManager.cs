@@ -30,7 +30,7 @@ public class VoteFormManager
         if (voteForm.State != VoteFormState.AwaitingPhoneNumber)
             throw new VoteFormLogicalError("Phone number already set for this vote form");
 
-        if (petitionContext.Votes.Any(v => v.Phone == phone))
+        if (petitionContext.Votes.Where(v => v.PetitionId == voteForm.PetitionId).Any(v => v.Phone == phone))
             throw new VoteFormLogicalError("A person already voted with this phone number");
         
         voteForm.Phone = phone;
