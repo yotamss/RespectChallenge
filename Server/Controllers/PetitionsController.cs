@@ -66,7 +66,11 @@ public class PetitionsController : ControllerBase
     [HttpGet("{id}/flag")]
     public async Task<ActionResult<Petition>> GetFlagForAsync(int id)
     {
-        var currentUser = await userManager.FindByEmailAsync(HttpContext.User.Identity!.Name!);
+        var email = HttpContext.User.Identity.Name;
+        
+        if (email is null)
+            return Ok(new { Message = "Could not find user, login first." });
+        var currentUser = await userManager.FindByEmailAsync(email);
 
         if (currentUser is null)
             return Ok(new { Message = "Could not find user, login first." });

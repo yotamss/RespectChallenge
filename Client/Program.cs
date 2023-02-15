@@ -1,6 +1,5 @@
 using System.Net.Http.Headers;
 using Blazored.LocalStorage;
-using Blazored.LocalStorage.StorageOptions;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -31,7 +30,7 @@ builder.Services.AddTransient<MyPhoneManager>();
 
 builder.Services.AddHttpClient("serverHttpClient", (serviceProvider, client) =>
 {
-    client.BaseAddress = new Uri("http://localhost:7355");
+    client.BaseAddress = new Uri("http://localhost:5443");
     var accessToken = serviceProvider.GetRequiredService<ITokenStore>().GetToken();
     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 });

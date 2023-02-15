@@ -1,0 +1,24 @@
+﻿@page "/instructions"
+@inject NavigationManager NavigationManager
+
+<MudPaper Outlined="false" Elevation="0" class="d-flex justify-content-center align-content-center flex-wrap mb-5 mt-5">
+    <MudText Typo="Typo.h3">
+        Instructions
+    </MudText>
+</MudPaper>
+<MudPaper Outlined="false" Elevation="0" class="d-flex justify-content-center align-content-center flex-wrap mb-5">
+    <MudText Typo="Typo.subtitle1">
+        On the link below you have a phone emulator. That's all you need to know (I guess)
+    </MudText>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GotoPhone"
+               StartIcon="@Icons.Material.Filled.Phone">
+        Link to phone
+    </MudButton>
+</MudPaper>
+
+@code {
+    private void GotoPhone()
+    {
+        NavigationManager.NavigateTo("/phone");
+    }
+}

@@ -126,7 +126,7 @@ app.UseRateLimiter();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseMigrationsEndPoint();
+    // app.UseMigrationsEndPoint();
     app.UseWebAssemblyDebugging();
     app.UseSwagger();
     app.UseSwaggerUI();

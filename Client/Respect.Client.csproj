@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <None Include="wwwroot\Images\petition.jpg" />
+    <None Remove="docker-compose.yml" />
   </ItemGroup>
 
   <ItemGroup>

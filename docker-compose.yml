@@ -1,0 +1,10 @@
+version: '3.4'
+
+services:
+  blazorhosted:
+    image: petitions.xorg
+    build:
+      context: .
+      dockerfile: Server/Dockerfile
+    ports:
+        - 5443:80
