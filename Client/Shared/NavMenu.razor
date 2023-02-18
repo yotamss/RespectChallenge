@@ -8,6 +8,7 @@
 </style>
 
 <MudNavMenu Color="Color.Warning">
+    <MudNavLink Match="NavLinkMatch.All" Href="/" Icon="@Icons.Material.Filled.Home" IconColor="@Color.Surface">Homepage</MudNavLink>
     @if (authenticated)
     {
         <MudNavLink Href="/petition/create" Icon="@Icons.Material.Filled.Add" IconColor="@Color.Surface">Create a petition</MudNavLink>

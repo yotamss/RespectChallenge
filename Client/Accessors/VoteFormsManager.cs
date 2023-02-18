@@ -25,7 +25,7 @@ public class VoteFormsManager
     public async Task<HttpResponseMessage> AskForVerificationCodeAsync(string voteFormId)
     {
         return await httpClient.PostAsJsonAsync(
-            $"/VoteForm/{voteFormId}/verify",
+            $"/VoteForm/{voteFormId}/requestSms",
             new AskForVerificationCode()
         );
     }

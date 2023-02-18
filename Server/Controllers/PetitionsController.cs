@@ -82,13 +82,13 @@ public class PetitionsController : ControllerBase
 
         if (petition is null) return Ok(new { Message = "Petition not found." });
 
-        if (currentUser.Id != petition.OwnerEmail)
+        if (currentUser.Email != petition.OwnerEmail)
             return Ok(new { Message = "You are not the owner of this petition, only owners can get the flag." });
 
         if (petition.Votes.Count < petition.TargetVotes)
             return Ok(new { Message = "Votes amount must be more than the target votes to get the flag." });
 
-        return Ok("HTB{TOCTOU_TO_THE_HAND}");
+        return Ok(new { Message = "HTB{TOCTOU_TO_THE_HAND}" });
     }
 
 

@@ -61,7 +61,7 @@ public class VoteFormController : ControllerBase
         return Ok();
     }
 
-    [HttpPost("{id}/verify")]
+    [HttpPost("{id}/requestSms")]
     public async Task<ActionResult> SendVerificationAsync(string id)
     {
         var voteForm = await petitionContext.VoteForms.FindAsync(id); // maybe guid.parse is needed
