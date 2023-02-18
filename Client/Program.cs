@@ -30,7 +30,7 @@ builder.Services.AddTransient<MyPhoneManager>();
 
 builder.Services.AddHttpClient("serverHttpClient", (serviceProvider, client) =>
 {
-    client.BaseAddress = new Uri("http://localhost:5443");
+    client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
     var accessToken = serviceProvider.GetRequiredService<ITokenStore>().GetToken();
     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 });
